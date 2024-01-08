@@ -12,6 +12,7 @@ export class RecipeService {
   constructor(private shoppingListService: ShoppingListService) {
     this.recipes = [
       {
+        id: 1,
         name: 'Schnitzel',
         description: 'Ein leckeres Schnitzel',
         imagePath:
@@ -23,6 +24,7 @@ export class RecipeService {
         ],
       },
       {
+        id: 2,
         name: 'Chili sin carne',
         description: 'Leckeres Chili ganz ohne Fleisch',
         imagePath:
@@ -35,11 +37,16 @@ export class RecipeService {
       },
     ];
   }
+
   getRecipes() {
     return this.recipes.slice();
   }
 
   addIngredientsToShoppingList(ingredients: Ingredient[]) {
     this.shoppingListService.addIngredients(ingredients);
+  }
+
+  getRecipe(id: number): Recipe {
+    return this.recipes.filter((recipe) => recipe.id === id)[0];
   }
 }
