@@ -12,6 +12,15 @@
             name="name"
             required
           />
+          <span
+            class="help-block"
+            *ngIf="
+              form.controls.name &&
+              form.controls.name.touched &&
+              !form.controls.name.valid
+            "
+            >Please enter a valid name!</span
+          >
         </div>
         <div class="col-sm-2 form-group">
           <label for="amount">Amount</label>
@@ -23,11 +32,25 @@
             name="amount"
             required
           />
+          <span
+            class="help-block"
+            *ngIf="
+              form.controls.amount &&
+              form.controls.amount.touched &&
+              !form.controls.amount.valid
+            "
+            >Please enter a valid amount!</span
+          >
         </div>
       </div>
       <div class="row">
         <div class="col-xs-12">
-          <button class="btn btn-success" type="submit" (click)="onAddItem()">
+          <button
+            class="btn btn-success"
+            type="submit"
+            (click)="onAddItem()"
+            [disabled]="!form.valid"
+          >
             Add
           </button>
           <button class="btn btn-danger" type="button">Delete</button>
