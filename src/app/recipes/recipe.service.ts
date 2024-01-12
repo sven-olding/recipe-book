@@ -67,4 +67,14 @@ export class RecipeService {
     }
     this.recipesChanged.next(this.recipes.slice());
   }
+
+  deleteRecipe(id: number) {
+    for (let i = 0; i < this.recipes.length; i++) {
+      if (this.recipes[i].id === id) {
+        this.recipes.splice(i, 1);
+        break;
+      }
+    }
+    this.recipesChanged.next(this.recipes.slice());
+  }
 }
