@@ -1,1 +1,141 @@
-<p>recipe-edit works!</p>
+<div class="row">
+  <div class="col-xs-12">
+    <form [formGroup]="recipeForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-xs-12">
+          <button
+            type="submit"
+            class="btn btn-success"
+            [disabled]="!recipeForm.valid"
+          >
+            Save
+          </button>
+          <button type="button" class="btn btn-danger" (click)="onCancel()">
+            Cancel
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input
+              type="text"
+              id="name"
+              formControlName="name"
+              class="form-control"
+            />
+            <span
+              class="help-block"
+              *ngIf="
+                recipeForm.get('name').touched && !recipeForm.get('name').valid
+              "
+              >Please enter a name!</span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label for="imagePath">Image URL</label>
+            <input
+              type="text"
+              id="imagePath"
+              formControlName="imagePath"
+              class="form-control"
+            />
+            <span
+              class="help-block"
+              *ngIf="
+                recipeForm.get('imagePath').touched &&
+                !recipeForm.get('imagePath').valid
+              "
+              >Please enter an image URL!</span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <img src="" alt="" class="img-responsive" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              rows="6"
+              formControlName="description"
+              class="form-control"
+            ></textarea>
+            <span
+              class="help-block"
+              *ngIf="
+                recipeForm.get('description').touched &&
+                !recipeForm.get('description').valid
+              "
+              >Please enter a description!</span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12" formArrayName="ingredients">
+          <div
+            class="row"
+            *ngFor="let ingredientControl of controls; let i = index"
+            [formGroupName]="i"
+          >
+            <div class="col-xs-8">
+              <input type="text" class="form-control" formControlName="name" />
+              <span
+                class="help-block"
+                *ngIf="
+                  recipeForm.get('ingredients.' + i + '.name').touched &&
+                  !recipeForm.get('ingredients.' + i + '.name').valid
+                "
+              >
+                Please enter a description!
+              </span>
+            </div>
+            <div class="col-xs-2">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="amount"
+              />
+              <span
+                class="help-block"
+                *ngIf="
+                  recipeForm.get('ingredients.' + i + '.amount').touched &&
+                  !recipeForm.get('ingredients.' + i + '.amount').valid
+                "
+              >
+                Please enter an amount!
+              </span>
+            </div>
+            <div class="col-xs-2">
+              <button class="btn btn-danger">X</button>
+            </div>
+            <hr />
+          </div>
+          <hr />
+          <div class="row">
+            <div class="col-xs-12">
+              <button
+                class="btn btn-success"
+                (click)="onAddIngredient()"
+                type="button"
+              >
+                Add Ingredient
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
