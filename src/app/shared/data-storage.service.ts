@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, tap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 import { Recipe } from '../recipes/recipe.model';
 import { RecipeService } from '../recipes/recipe.service';
 
 @Injectable({ providedIn: 'root' })
 export class DataStorageService {
-  private readonly FIREBASE_URL =
-    'https://recipe-book-86a36-default-rtdb.europe-west1.firebasedatabase.app/recipes.json';
+  private readonly FIREBASE_URL = environment.firebaseDatabaseURL;
 
   constructor(private http: HttpClient, private recipeService: RecipeService) {}
 
