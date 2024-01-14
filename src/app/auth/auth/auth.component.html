@@ -1,6 +1,12 @@
 <div class="row">
   <div class="col-xs-12 col-md-6 offset-3">
-    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+    <div
+      class="alert alert-danger"
+      *ngIf="error != null && error !== '' && !isLoading"
+    >
+      <p>{{ error }}</p>
+    </div>
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
       <div class="form-group">
         <label for="email">Email</label>
         <input
@@ -57,5 +63,8 @@
         </button>
       </div>
     </form>
+    <div *ngIf="isLoading" style="text-align: center">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
   </div>
 </div>

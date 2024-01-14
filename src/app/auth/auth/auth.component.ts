@@ -8,8 +8,10 @@ import { AuthService } from './auth.service';
   styleUrl: './auth.component.css',
 })
 export class AuthComponent implements OnInit {
+  isLoading = false;
   isLoginMode = true;
   signupForm: FormGroup;
+  error: string = null;
 
   constructor(private authService: AuthService) {}
 
@@ -39,24 +41,38 @@ export class AuthComponent implements OnInit {
     }
   }
 
+  private toggleLoading() {
+    this.isLoading = !this.isLoading;
+  }
+
   private login(email: string, password: string) {
+    this.toggleLoading();
     this.authService.login(email, password).subscribe(
       (response) => {
         console.log(response);
+        this.toggleLoading();
+        this.error = null;
       },
-      (error) => {
-        console.error(error);
+      (errorResponse) => {
+        console.error(errorResponse);
+        this.toggleLoading();
+        this.error = errorResponse;
       }
     );
   }
 
   private signup(email: string, password: string) {
+    this.toggleLoading();
     this.authService.signup(email, password).subscribe(
       (response) => {
         console.log(response);
+        this.toggleLoading();
+        this.error = null;
       },
-      (error) => {
-        console.error(error);
+      (errorResponse) => {
+        console.error(errorResponse);
+        this.toggleLoading();
+        this.error = errorResponse;
       }
     );
   }
