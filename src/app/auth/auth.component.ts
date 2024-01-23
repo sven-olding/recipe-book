@@ -1,19 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from './auth.service';
+import { Router } from '@angular/router';
+import { Observable, Subscription } from 'rxjs';
+import { AuthResponseData, AuthService } from './auth.service';
 
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.css',
 })
-export class AuthComponent implements OnInit {
+export class AuthComponent implements OnInit, OnDestroy {
   isLoading = false;
   isLoginMode = true;
   signupForm: FormGroup;
   error: string = null;
+  private authSubscription: Subscription;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.signupForm = new FormGroup({
@@ -25,6 +28,10 @@ export class AuthComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.authSubscription?.unsubscribe();
+  }
+
   onSwitchMode() {
     this.isLoginMode = !this.isLoginMode;
   }
@@ -34,44 +41,23 @@ export class AuthComponent implements OnInit {
       return;
     }
     const { email, password } = this.signupForm.value;
+    let authObservable: Observable<AuthResponseData>;
+    this.isLoading = true;
     if (this.isLoginMode) {
-      this.login(email, password);
+      authObservable = this.authService.login(email, password);
     } else {
-      this.signup(email, password);
+      authObservable = this.authService.signup(email, password);
     }
-  }
-
-  private toggleLoading() {
-    this.isLoading = !this.isLoading;
-  }
-
-  private login(email: string, password: string) {
-    this.toggleLoading();
-    this.authService.login(email, password).subscribe(
+    this.authSubscription = authObservable.subscribe(
       (response) => {
         console.log(response);
-        this.toggleLoading();
+        this.isLoading = false;
         this.error = null;
+        this.router.navigate(['/recipes']);
       },
       (errorResponse) => {
         console.error(errorResponse);
-        this.toggleLoading();
-        this.error = errorResponse;
-      }
-    );
-  }
-
-  private signup(email: string, password: string) {
-    this.toggleLoading();
-    this.authService.signup(email, password).subscribe(
-      (response) => {
-        console.log(response);
-        this.toggleLoading();
-        this.error = null;
-      },
-      (errorResponse) => {
-        console.error(errorResponse);
-        this.toggleLoading();
+        this.isLoading = false;
         this.error = errorResponse;
       }
     );
