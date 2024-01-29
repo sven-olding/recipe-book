@@ -36,6 +36,10 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.isLoginMode = !this.isLoginMode;
   }
 
+  onHandleError() {
+    this.error = null;
+  }
+
   onSubmit() {
     if (!this.signupForm.valid) {
       return;
