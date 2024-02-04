@@ -1,8 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ComponentFactoryResolver, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { AuthResponseData, AuthService } from './auth.service';
+import { AlertComponent } from '../shared/alert/alert.component';
+import { PlaceholderDirective } from '../shared/placeholder/placeholder.directive';
 
 @Component({
   selector: 'app-auth',
@@ -13,10 +15,12 @@ export class AuthComponent implements OnInit, OnDestroy {
   isLoading = false;
   isLoginMode = true;
   signupForm: FormGroup;
-  error: string = null;
   private authSubscription: Subscription;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, 
+    private router: Router, 
+    private componentFactoryResolver: ComponentFactoryResolver) {}
+    @ViewChild(PlaceholderDirective, {static: false}) alertHost: PlaceholderDirective;
 
   ngOnInit(): void {
     this.signupForm = new FormGroup({
@@ -37,7 +41,18 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   onHandleError() {
-    this.error = null;
+  }
+
+  private showErrorAlert(message: string) {
+    const alertComponentFactory = this.componentFactoryResolver.resolveComponentFactory(AlertComponent);
+    const hostViewContainerRef = this.alertHost.viewContainerRef;
+    hostViewContainerRef.clear();
+    const componentRef = hostViewContainerRef.createComponent(alertComponentFactory);
+    componentRef.instance.message = message;
+    this.authSubscription = componentRef.instance.close.subscribe(() => {
+      this.authSubscription.unsubscribe();
+      hostViewContainerRef.clear();
+    });
   }
 
   onSubmit() {
@@ -56,13 +71,12 @@ export class AuthComponent implements OnInit, OnDestroy {
       (response) => {
         console.log(response);
         this.isLoading = false;
-        this.error = null;
         this.router.navigate(['/recipes']);
       },
       (errorResponse) => {
         console.error(errorResponse);
         this.isLoading = false;
-        this.error = errorResponse;
+        this.showErrorAlert(errorResponse);
       }
     );
   }
